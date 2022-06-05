@@ -23,7 +23,7 @@ public class ResponseWrapper {
         );
     }
 
-    private Map mapResponse(int code, String status, Map data) {
+    public Map mapResponse(int code, String status, Map data) {
         Map mapResponse = new HashMap();
         mapResponse.put("data", data);
         mapResponse.put("status", status);
