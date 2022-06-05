@@ -15,9 +15,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
 @NoArgsConstructor
-@Table(name="transaksi")
+@Entity(name = "transaksi")
+@Table(name = "transaksi")
 public class Transaksi {
 
     @Id
@@ -25,24 +25,24 @@ public class Transaksi {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="tenor", nullable = false)
+    @Column(name = "tenor", nullable = false)
     private Integer tenor;
 
-    @Column(name="total_pinjaman", nullable = false)
+    @Column(name = "total_pinjaman", nullable = false)
     private BigDecimal totalLoan;
 
-    @Column(name="bunga_persen", nullable = false)
+    @Column(name = "bunga_persen", nullable = false)
     private Double percentInterest;
 
     @Column(name = "status", nullable = false)
     private String status;
 
     @ManyToOne
-    @JoinColumn(name="id_peminjam", referencedColumnName = "id")
+    @JoinColumn(name = "id_peminjam", referencedColumnName = "id")
     private User borrowerUser;
 
     @ManyToOne
-    @JoinColumn(name="id_meminjam", referencedColumnName = "id")
+    @JoinColumn(name = "id_meminjam", referencedColumnName = "id")
     private User userBorrow;
 
 }

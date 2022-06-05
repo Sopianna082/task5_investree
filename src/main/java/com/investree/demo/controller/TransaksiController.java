@@ -1,72 +1,43 @@
 package com.investree.demo.controller;
 
 import com.investree.demo.model.Transaksi;
-import com.investree.demo.repository.TransaksiRepository;
+import com.investree.demo.utils.ResponseWrapper;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.investree.demo.view.TransaksiService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/v1/transaksi")
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes"})
 public class TransaksiController {
 
     private final TransaksiService service;
-    private final TransaksiRepository repository;
+    private final ResponseWrapper wrapper;
 
     @PostMapping
-    public ResponseEntity<Map> save(Transaksi transaction) {
-        return getResult(service.save(transaction));
+    public ResponseEntity<Map> save(@RequestBody Transaksi transaction) {
+        return wrapper.getResult(service.save(transaction));
     }
 
     @PutMapping
-    public ResponseEntity<Map> updateStatus(Transaksi transaction) {
-        return getResult(service.updateStatus(transaction));
+    public ResponseEntity<Map> updateStatus(@RequestBody Transaksi transaction) {
+        return wrapper.getResult(service.updateStatus(transaction));
     }
 
     @GetMapping("/list")
     public ResponseEntity<Page<Transaksi>> list(
-            @RequestParam Integer page,
-            @RequestParam Integer size,
-            @RequestParam String status
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "") String status
     ) {
-        Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(repository.findAll(status, pageable));
-    }
-
-    private ResponseEntity<Map> getResult(Map data) {
-        if (data.get("message") != null) {
-            return ResponseEntity.internalServerError()
-                    .body(mapResponse(500, "gagal", data));
-        }
-
-        return ResponseEntity.ok(
-                mapResponse(
-                        200,
-                        "sukses",
-                        data)
-        );
-    }
-
-    private Map mapResponse(int code, String status, Map data) {
-        Map mapResponse = new HashMap();
-        mapResponse.put("data", data);
-        mapResponse.put("status", status);
-        mapResponse.put("code", code);
-        return mapResponse;
+        return ResponseEntity.ok(service.list(status, page, size));
     }
 
 }

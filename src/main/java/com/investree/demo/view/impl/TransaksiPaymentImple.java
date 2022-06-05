@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -54,6 +57,22 @@ public class TransaksiPaymentImple implements TransaksiService {
         mapData.put("meminjam", transaction.getUserBorrow());
 
         return mapData;
+    }
+
+    @Override
+    public Page<Transaksi> list(String status, Integer page, Integer size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+
+            if (status.isEmpty()) {
+                return repository.findAll(pageable);
+            }
+
+            return repository.findAll(status, pageable);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Page.empty();
+        }
     }
 
     private Map mapError(Exception e) {
